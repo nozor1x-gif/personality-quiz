@@ -3,341 +3,563 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>รู้จักตัวตนของคุณ</title>
+<title>ค้นหาตัวตนที่แท้จริง</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Kanit', sans-serif;
   min-height: 100vh;
-  background: #0a0a0f;
+  background: #07070d;
   color: #e0d0ff;
   overflow-x: hidden;
+  cursor: default;
 }
-.stars {
+
+canvas#particles {
   position: fixed;
   inset: 0;
-  pointer-events: none;
   z-index: 0;
+  pointer-events: none;
 }
-.star {
-  position: absolute;
-  width: 2px; height: 2px;
-  background: #fff;
-  border-radius: 50%;
-  animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
-}
-@keyframes twinkle {
-  0% { opacity: 0.2; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1.2); }
-}
-.glow-circle {
+
+.glow {
   position: fixed;
-  width: 500px; height: 500px;
   border-radius: 50%;
   filter: blur(120px);
-  opacity: 0.15;
   pointer-events: none;
   z-index: 0;
+  opacity: 0.12;
 }
-.gc1 { top: -100px; right: -100px; background: #7c3aed; animation: drift 20s ease-in-out infinite alternate; }
-.gc2 { bottom: -100px; left: -100px; background: #2563eb; animation: drift 25s ease-in-out infinite alternate-reverse; }
-.gc3 { top: 50%; left: 50%; transform: translate(-50%,-50%); background: #db2777; animation: drift 15s ease-in-out infinite alternate; }
-@keyframes drift {
+.glow-1 { width: 600px; height: 600px; top: -200px; right: -200px; background: #7c3aed; animation: floatGlow 30s ease-in-out infinite alternate; }
+.glow-2 { width: 500px; height: 500px; bottom: -150px; left: -150px; background: #2563eb; animation: floatGlow 25s ease-in-out infinite alternate-reverse; }
+.glow-3 { width: 400px; height: 400px; top: 50%; left: 50%; transform: translate(-50%,-50%); background: #db2777; animation: floatGlow 20s ease-in-out infinite alternate; }
+@keyframes floatGlow {
   0% { transform: translate(0,0) scale(1); }
-  100% { transform: translate(30px,-30px) scale(1.1); }
+  100% { transform: translate(60px,-40px) scale(1.15); }
 }
+
 .container {
   position: relative;
   z-index: 1;
-  max-width: 700px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 30px 16px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-.card {
+
+.glass {
   width: 100%;
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 24px;
-  padding: 40px 32px;
-  transition: all 0.5s ease;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 28px;
+  padding: 44px 36px;
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
 }
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.05), transparent 50%);
+  pointer-events: none;
+}
+
 .hidden { display: none !important; }
+
+/* === START === */
 .start-screen { text-align: center; }
+.start-icon {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 8px;
+  animation: levitate 4s ease-in-out infinite;
+}
+@keyframes levitate {
+  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 20px rgba(124,58,237,0.3)); }
+  50% { transform: translateY(-14px) scale(1.02); filter: drop-shadow(0 0 40px rgba(124,58,237,0.6)); }
+}
 .start-screen h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #c084fc, #60a5fa, #f472b6);
+  font-size: 2.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #c084fc, #60a5fa, #f472b6, #c084fc);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  animation: shimmer 6s ease-in-out infinite;
 }
-.start-screen .subtitle {
-  color: #a89bc0;
-  font-size: 1.1rem;
-  margin-bottom: 32px;
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.start-screen .tagline {
+  color: #8a7ca0;
+  font-size: 1rem;
+  margin-bottom: 28px;
   line-height: 1.7;
 }
-.start-screen .mystic-icon {
-  font-size: 4rem;
+.name-input-wrap {
   margin-bottom: 20px;
-  display: block;
-  animation: float 3s ease-in-out infinite;
 }
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+.name-input-wrap input {
+  font-family: 'Kanit', sans-serif;
+  width: 100%;
+  max-width: 320px;
+  padding: 14px 20px;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: #f0e8ff;
+  font-size: 1rem;
+  text-align: center;
+  outline: none;
+  transition: all 0.3s;
 }
+.name-input-wrap input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 30px rgba(124,58,237,0.15);
+}
+.name-input-wrap input::placeholder { color: #6a5c80; }
+
 .btn {
   font-family: 'Kanit', sans-serif;
-  padding: 14px 40px;
+  padding: 15px 44px;
   border: none;
   border-radius: 50px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
 }
 .btn-primary {
   background: linear-gradient(135deg, #7c3aed, #2563eb);
   color: #fff;
-  box-shadow: 0 4px 25px rgba(124,58,237,0.3);
+  box-shadow: 0 4px 30px rgba(124,58,237,0.25);
 }
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 35px rgba(124,58,237,0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 45px rgba(124,58,237,0.4);
 }
-.btn-option {
-  width: 100%;
-  padding: 16px 20px;
-  margin-bottom: 10px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 14px;
-  color: #d0c0e8;
-  font-size: 1rem;
-  text-align: left;
-  transition: all 0.3s ease;
-  font-family: 'Kanit', sans-serif;
-  cursor: pointer;
-  line-height: 1.5;
+.btn-primary:active { transform: translateY(0) scale(0.98); }
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: 0.6s;
 }
-.btn-option:hover {
-  background: rgba(124,58,237,0.15);
-  border-color: #7c3aed;
-  transform: translateX(4px);
+.btn-primary:hover::after { transform: translateX(100%); }
+
+/* === QUIZ === */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
-.btn-option.selected {
-  background: rgba(124,58,237,0.2);
-  border-color: #7c3aed;
-  box-shadow: 0 0 20px rgba(124,58,237,0.15);
-}
-.question-header {
-  margin-bottom: 24px;
-}
-.question-number {
+.q-num {
   color: #7c3aed;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 1px;
-  margin-bottom: 8px;
 }
-.progress-bar {
+.q-counter {
+  color: #6a5c80;
+  font-size: 0.8rem;
+}
+.progress-track {
   width: 100%;
   height: 4px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px;
-  margin-bottom: 24px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  margin-bottom: 28px;
   overflow: hidden;
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #7c3aed, #60a5fa);
-  border-radius: 2px;
-  transition: width 0.5s ease;
+  background: linear-gradient(90deg, #7c3aed, #60a5fa, #c084fc);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: progressGlow 3s ease-in-out infinite;
 }
-.question-text {
+@keyframes progressGlow {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 0%; }
+}
+.q-text {
   font-size: 1.35rem;
   font-weight: 500;
   color: #f0e8ff;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   line-height: 1.6;
+  min-height: 80px;
 }
+
+.options-grid { display: flex; flex-direction: column; gap: 10px; }
+
+.opt-btn {
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  color: #d0c0e8;
+  font-size: 1rem;
+  text-align: left;
+  font-family: 'Kanit', sans-serif;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  line-height: 1.5;
+  position: relative;
+  overflow: hidden;
+}
+.opt-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #7c3aed20, transparent);
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.opt-btn:hover:not(.selected) {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(124,58,237,0.3);
+  transform: translateX(6px);
+}
+.opt-btn:hover::before { opacity: 1; }
+.opt-btn.selected {
+  background: rgba(124,58,237,0.15);
+  border-color: #7c3aed;
+  box-shadow: 0 0 30px rgba(124,58,237,0.12), inset 0 0 20px rgba(124,58,237,0.05);
+  transform: translateX(8px);
+}
+.opt-btn .opt-letter {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 8px;
+  background: rgba(124,58,237,0.12);
+  color: #a78bfa;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-right: 12px;
+  transition: all 0.35s;
+}
+.opt-btn.selected .opt-letter {
+  background: #7c3aed;
+  color: #fff;
+}
+.btn-next-wrap { margin-top: 16px; }
 .btn-next {
   width: 100%;
-  margin-top: 8px;
   padding: 14px;
   background: linear-gradient(135deg, #7c3aed, #2563eb);
   color: #fff;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
   font-size: 1.05rem;
   font-weight: 600;
   font-family: 'Kanit', sans-serif;
   cursor: pointer;
-  transition: all 0.3s ease;
-  opacity: 0.5;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.3;
   pointer-events: none;
+  position: relative;
+  overflow: hidden;
 }
-.btn-next.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-.btn-next.active:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(124,58,237,0.3);
-}
-.result-screen {
-  text-align: center;
-}
-.result-icon {
-  font-size: 5rem;
-  margin-bottom: 16px;
+.btn-next.active { opacity: 1; pointer-events: auto; }
+.btn-next.active:hover { transform: translateY(-2px); box-shadow: 0 10px 35px rgba(124,58,237,0.3); }
+.btn-next.active:active { transform: translateY(0) scale(0.99); }
+
+/* === RESULT === */
+.result-screen { text-align: center; }
+.result-icon-big {
+  font-size: 6rem;
   display: block;
-  animation: float 3s ease-in-out infinite;
+  margin-bottom: 4px;
+  animation: resultFloat 4s ease-in-out infinite;
+}
+@keyframes resultFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(-3deg); }
+  75% { transform: translateY(-4px) rotate(3deg); }
+}
+.result-badge {
+  display: inline-block;
+  padding: 4px 20px;
+  border-radius: 50px;
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.2);
+  color: #a78bfa;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
 .result-screen h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 8px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
   background: linear-gradient(135deg, #c084fc, #60a5fa, #f472b6);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-.result-subtitle {
-  color: #a89bc0;
-  font-size: 1.1rem;
+.result-sub {
+  color: #8a7ca0;
+  font-size: 1rem;
   margin-bottom: 20px;
 }
-.result-description {
-  color: #d0c0e8;
-  font-size: 1rem;
-  line-height: 1.8;
-  margin-bottom: 24px;
-  padding: 20px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.06);
-  text-align: left;
-}
-.result-traits {
+.traits-wrap {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
-.trait-tag {
-  padding: 6px 16px;
-  background: rgba(124,58,237,0.15);
-  border: 1px solid rgba(124,58,237,0.25);
-  border-radius: 20px;
-  font-size: 0.85rem;
+.trait {
+  padding: 5px 14px;
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(124,58,237,0.15);
+  border-radius: 50px;
+  font-size: 0.8rem;
   color: #c084fc;
+  animation: fadeUp 0.5s ease forwards;
+  opacity: 0;
 }
-.scores-section {
-  margin: 20px 0;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.result-desc {
+  color: #d0c0e8;
+  font-size: 0.95rem;
+  line-height: 1.9;
+  margin-bottom: 20px;
   padding: 20px;
   background: rgba(255,255,255,0.03);
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.05);
+  text-align: left;
 }
-.score-item {
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.detail-card {
+  padding: 14px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  text-align: left;
+}
+.detail-card .label {
+  font-size: 0.7rem;
+  color: #6a5c80;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.detail-card .value {
+  font-size: 0.9rem;
+  color: #d0c0e8;
+}
+.bar-section {
+  margin: 16px 0;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.bar-section .bar-title {
+  color: #8a7ca0;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.bar-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
-.score-label {
-  width: 80px;
-  font-size: 0.9rem;
-  color: #a89bc0;
+.bar-label {
+  width: 70px;
+  font-size: 0.85rem;
+  color: #8a7ca0;
   text-align: right;
+  flex-shrink: 0;
 }
-.score-bar-bg {
+.bar-bg {
   flex: 1;
-  height: 8px;
-  background: rgba(255,255,255,0.08);
+  height: 7px;
+  background: rgba(255,255,255,0.05);
   border-radius: 4px;
   overflow: hidden;
 }
-.score-bar-fill {
+.bar-fill {
   height: 100%;
   border-radius: 4px;
-  transition: width 1.5s ease;
+  width: 0;
+  transition: width 1.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.score-val {
-  width: 40px;
-  font-size: 0.85rem;
-  color: #c084fc;
+.bar-pct {
+  width: 38px;
+  font-size: 0.8rem;
+  color: #a78bfa;
   font-weight: 600;
+  flex-shrink: 0;
 }
+.result-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.btn-secondary {
+  font-family: 'Kanit', sans-serif;
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  color: #d0c0e8;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(124,58,237,0.3);
+  transform: translateY(-2px);
+}
+
 footer {
-  margin-top: 24px;
-  color: #6a5c80;
-  font-size: 0.85rem;
+  margin-top: 20px;
+  color: #4a3c60;
+  font-size: 0.8rem;
   text-align: center;
 }
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(124,58,237,0.9);
+  backdrop-filter: blur(12px);
+  padding: 12px 28px;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 0.9rem;
+  z-index: 100;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 @media (max-width: 600px) {
-  .card { padding: 28px 18px; }
+  .glass { padding: 28px 18px; border-radius: 20px; }
   .start-screen h1 { font-size: 1.8rem; }
-  .question-text { font-size: 1.1rem; }
-  .result-screen h2 { font-size: 1.5rem; }
-  .btn-option { padding: 14px 16px; font-size: 0.95rem; }
+  .q-text { font-size: 1.1rem; min-height: 60px; }
+  .result-screen h2 { font-size: 1.6rem; }
+  .result-icon-big { font-size: 4.5rem; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .opt-btn { padding: 14px 16px; font-size: 0.9rem; }
 }
 </style>
 </head>
 <body>
 
-<div class="stars" id="stars"></div>
-<div class="glow-circle gc1"></div>
-<div class="glow-circle gc2"></div>
-<div class="glow-circle gc3"></div>
+<canvas id="particles"></canvas>
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+<div class="glow glow-3"></div>
+<div class="toast" id="toast"></div>
 
 <div class="container">
-  <div class="card">
+  <div class="glass">
 
     <div id="startScreen" class="start-screen">
-      <span class="mystic-icon">🔮</span>
+      <span class="start-icon">🔮</span>
       <h1>ค้นหาตัวตนที่แท้จริง</h1>
-      <p class="subtitle">ตอบคำถาม 15 ข้อ เพื่อค้นพบว่าคุณเป็นคนแบบไหน<br>ปลดล็อกพลังภายในตัวคุณ</p>
+      <p class="tagline">ปลดล็อกพลังภายในตัวคุณ<br>ตอบคำถาม 15 ข้อ เพื่อค้นพบว่าคุณคือใคร</p>
+      <div class="name-input-wrap">
+        <input type="text" id="nameInput" placeholder="กรอกชื่อของคุณ..." maxlength="30" autocomplete="off">
+      </div>
       <button class="btn btn-primary" onclick="startQuiz()">
-        ✦ เริ่มสำรวจตัวตน
+        ✦ เริ่มสำรวจ
       </button>
     </div>
 
     <div id="quizScreen" class="hidden">
-      <div class="question-header">
-        <div class="question-number" id="questionNumber">ข้อที่ 1 / 15</div>
+      <div class="quiz-header">
+        <span class="q-num" id="questionLabel">✦ ข้อที่ 1</span>
+        <span class="q-counter" id="questionCounter">1 / 15</span>
       </div>
-      <div class="progress-bar">
+      <div class="progress-track">
         <div class="progress-fill" id="progressFill" style="width:0%"></div>
       </div>
-      <div class="question-text" id="questionText"></div>
-      <div id="optionsContainer"></div>
-      <button class="btn-next" id="btnNext" onclick="nextQuestion()">✦ ถัดไป</button>
+      <div class="q-text" id="questionText"></div>
+      <div class="options-grid" id="optionsContainer"></div>
+      <div class="btn-next-wrap">
+        <button class="btn-next" id="btnNext" onclick="nextQuestion()">✦ ถัดไป</button>
+      </div>
     </div>
 
     <div id="resultScreen" class="hidden result-screen">
-      <span class="result-icon" id="resultIcon">🌟</span>
+      <span class="result-icon-big" id="resultIcon">🌟</span>
+      <div class="result-badge" id="resultBadge">บุคลิกภาพ</div>
       <h2 id="resultTitle">คุณคือ...</h2>
-      <p class="result-subtitle" id="resultSubtitle">บุคลิกภาพที่หายาก</p>
-      <div class="result-traits" id="resultTraits"></div>
-      <div class="result-description" id="resultDescription"></div>
-      <div class="scores-section" id="scoresSection"></div>
-      <button class="btn btn-primary" onclick="restartQuiz()">✦ ทำแบบทดสอบอีกครั้ง</button>
+      <p class="result-sub" id="resultSubtitle"></p>
+      <div class="traits-wrap" id="resultTraits"></div>
+      <div class="result-desc" id="resultDescription"></div>
+      <div class="detail-grid">
+        <div class="detail-card">
+          <div class="label">จุดแข็ง</div>
+          <div class="value" id="detailStrength"></div>
+        </div>
+        <div class="detail-card">
+          <div class="label">คำแนะนำ</div>
+          <div class="value" id="detailAdvice"></div>
+        </div>
+      </div>
+      <div class="bar-section">
+        <div class="bar-title">สัดส่วนบุคลิกภาพ</div>
+        <div id="barContainer"></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-secondary" onclick="shareResult()">📤 แชร์ผลลัพท์</button>
+        <button class="btn-primary" onclick="restartQuiz()">✦ ทำใหม่</button>
+      </div>
     </div>
 
   </div>
@@ -345,242 +567,245 @@ footer {
 </div>
 
 <script>
-const types = [
-  {
-    id: 'warrior',
-    name: 'นักรบ',
-    icon: '⚔️',
-    traits: ['กล้าหาญ', 'มุ่งมั่น', 'ตรงไปตรงมา', 'มีความเป็นผู้นำ', 'กล้าตัดสินใจ'],
-    desc: 'คุณคือคนที่มีจิตใจเข้มแข็ง ไม่กลัวอุปสรรค เมื่อมีเป้าหมายคุณจะเดินไปข้างหน้าอย่างไม่ย่อท้อ คุณเป็นผู้นำโดยธรรมชาติ คนรอบข้างมองหาคุณเมื่อถึงเวลาต้องตัดสินใจ คุณเชื่อว่า "ทุกอุปสรรคมีทางผ่าน" และพร้อมจะสู้เพื่อสิ่งที่ถูกต้อง จุดแข็งของคุณคือความกล้าหาญและความมุ่งมั่น แต่อย่าลืมฟังคนรอบข้างบ้างนะ'
-  },
-  {
-    id: 'sage',
-    name: 'นักปราชญ์',
-    icon: '📜',
-    traits: ['ฉลาด', 'รอบคอบ', 'ช่างคิด', 'มีเหตุผล', 'ชอบเรียนรู้'],
-    desc: 'คุณเป็นคนที่รักการเรียนรู้และแสวงหาความจริง คุณมักจะคิดวิเคราะห์ทุกอย่างอย่างถี่ถ้วนก่อนตัดสินใจ คุณไม่เชื่ออะไรง่ายๆ โดยไม่มีหลักฐาน จุดแข็งของคุณคือสติปัญญาและความรอบคอบ คุณเป็นที่ปรึกษาที่ดีให้คนรอบข้าง เพราะคุณมองเห็นสิ่งที่คนอื่นมองไม่เห็น แต่อย่าลืมใช้หัวใจบ้างในบางครั้ง'
-  },
-  {
-    id: 'dreamer',
-    name: 'นักฝัน',
-    icon: '🌙',
-    traits: ['สร้างสรรค์', 'อ่อนไหว', 'มีจินตนาการ', 'มีศิลปะ', 'เข้าใจผู้อื่น'],
-    desc: 'คุณคือคนที่มีโลกภายในที่สวยงามและเต็มไปด้วยจินตนาการ คุณมองเห็นความงามในสิ่งเล็กๆ ที่คนอื่นมองข้าม คุณมีความคิดสร้างสรรค์และมีอารมณ์อ่อนไหว เข้าถึงความรู้สึกของคนอื่นได้ง่าย คุณเป็นนักเล่าเรื่องที่ดี ไม่ว่าจะผ่านคำพูด ดนตรี หรือภาพวาด จุดแข็งของคุณคือความคิดสร้างสรรค์ แต่อย่าลืมอยู่กับโลกความเป็นจริงบ้าง'
-  },
-  {
-    id: 'diplomat',
-    name: 'นักการทูต',
-    icon: '🤝',
-    traits: ['ใจดี', 'เข้าใจผู้อื่น', 'อบอุ่น', 'มีเมตตา', 'ประนีประนอม'],
-    desc: 'คุณคือคนที่มีจิตใจงดงามและอบอุ่น คุณเป็นคนที่คอยดูแลความรู้สึกของคนรอบข้างเสมอ คุณเก่งในการสร้างความสามัคคีและทำให้ทุกคนรู้สึกเป็นส่วนหนึ่ง คุณเป็นผู้ฟังที่ดี และคนอื่นมักจะมาหาคุณเมื่อต้องการที่พึ่ง จุดแข็งของคุณคือความเห็นอกเห็นใจและความสามารถในการเชื่อมโยงผู้คน แต่อย่าลืมดูแลความรู้สึกของตัวเองบ้าง'
+// === Particle canvas ===
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let pW, pH, particles = [], mouse = { x: -9999, y: -9999 };
+
+function resizeParticles() {
+  pW = canvas.width = window.innerWidth;
+  pH = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeParticles);
+resizeParticles();
+
+class Particle {
+  constructor() {
+    this.reset();
   }
+  reset() {
+    this.x = Math.random() * pW;
+    this.y = Math.random() * pH;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = (Math.random() - 0.5) * 0.3;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.hue = Math.random() * 60 + 260;
+  }
+  update() {
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 200) {
+      const force = (200 - dist) / 200 * 0.3;
+      this.x -= dx / dist * force;
+      this.y -= dy / dist * force;
+    }
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > pW || this.y < 0 || this.y > pH) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, 70%, 70%, ${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+document.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+let animId;
+function animateParticles() {
+  ctx.clearRect(0, 0, pW, pH);
+  particles.forEach(p => { p.update(); p.draw(); });
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `hsla(270, 60%, 60%, ${(1 - d / 120) * 0.12})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  animId = requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// === Quiz data ===
+const types = [
+  { id: 'warrior', name: 'นักรบ', icon: '⚔️', traits: ['กล้าหาญ','มุ่งมั่น','ตรงไปตรงมา','มีความเป็นผู้นำ','กล้าตัดสินใจ'],
+    strength: 'กล้าหาญ ตัดสินใจเร็ว ไม่ยอมแพ้ต่ออุปสรรค',
+    advice: 'ฝึกฟังความคิดเห็นผู้อื่นบ้าง บางครั้งใช้อารมณ์มากไป',
+    desc: 'คุณคือคนที่มีจิตใจเข้มแข็ง ไม่กลัวอุปสรรค เมื่อมีเป้าหมายคุณจะเดินไปข้างหน้าอย่างไม่ย่อท้อ คุณเป็นผู้นำโดยธรรมชาติ คนรอบข้างมองหาคุณเมื่อถึงเวลาต้องตัดสินใจ คุณเชื่อว่า "ทุกอุปสรรคมีทางผ่าน" และพร้อมจะสู้เพื่อสิ่งที่ถูกต้อง' },
+  { id: 'sage', name: 'นักปราชญ์', icon: '📜', traits: ['ฉลาด','รอบคอบ','ช่างคิด','มีเหตุผล','ชอบเรียนรู้'],
+    strength: 'คิดวิเคราะห์เก่ง มองเห็นปัญหาได้ลึกซึ้ง',
+    advice: 'อย่าคิดมากจนเกินไป ฝึกลงมือทำโดยไม่ต้องเตรียมตัวให้พร้อมเสมอ',
+    desc: 'คุณเป็นคนที่รักการเรียนรู้และแสวงหาความจริง คุณมักจะคิดวิเคราะห์ทุกอย่างอย่างถี่ถ้วนก่อนตัดสินใจ คุณไม่เชื่ออะไรง่ายๆ โดยไม่มีหลักฐาน คุณเป็นที่ปรึกษาที่ดี เพราะคุณมองเห็นสิ่งที่คนอื่นมองไม่เห็น' },
+  { id: 'dreamer', name: 'นักฝัน', icon: '🌙', traits: ['สร้างสรรค์','อ่อนไหว','มีจินตนาการ','มีศิลปะ','เข้าใจผู้อื่น'],
+    strength: 'ความคิดสร้างสรรค์สูง เข้าถึงความรู้สึกผู้อื่น',
+    advice: 'ฝึกอยู่กับปัจจุบันให้มากขึ้น อย่าเพ้อฝันจนลืมโลกความเป็นจริง',
+    desc: 'คุณคือคนที่มีโลกภายในที่สวยงามและเต็มไปด้วยจินตนาการ คุณมองเห็นความงามในสิ่งเล็กๆ ที่คนอื่นมักมองข้าม คุณคิดสร้างสรรค์และมีอารมณ์อ่อนไหว เข้าถึงความรู้สึกของคนอื่นได้ง่าย คุณเป็นนักเล่าเรื่องที่ดี ไม่ว่าจะผ่านคำพูด ดนตรี หรือภาพวาด' },
+  { id: 'diplomat', name: 'นักการทูต', icon: '🤝', traits: ['ใจดี','เข้าใจผู้อื่น','อบอุ่น','มีเมตตา','ประนีประนอม'],
+    strength: 'เห็นอกเห็นใจผู้อื่น สร้างความสามัคคีได้ดี',
+    advice: 'อย่าลืมดูแลตัวเองบ้าง การเอาใจคนอื่นมากไปอาจทำให้ตัวเองเหนื่อย',
+    desc: 'คุณคือคนที่มีจิตใจงดงามและอบอุ่น คุณคอยดูแลความรู้สึกของคนรอบข้างเสมอ คุณเก่งในการสร้างความสามัคคีและทำให้ทุกคนรู้สึกเป็นส่วนหนึ่ง คุณเป็นผู้ฟังที่ดี และคนอื่นมักจะมาหาคุณเมื่อต้องการที่พึ่ง' }
 ];
 
 const questions = [
-  {
-    q: 'เวลาอยู่กับเพื่อน คุณมักจะเป็นคนแบบไหน?',
-    opts: [
-      { t: 'ผู้นำที่พาเพื่อนทำกิจกรรมต่างๆ', type: 'warrior' },
-      { t: 'คนที่คอยสังเกตและวิเคราะห์สถานการณ์', type: 'sage' },
-      { t: 'คนที่ชวนคุยเรื่องจินตนาการและความฝัน', type: 'dreamer' },
-      { t: 'คนที่คอยดูแลความรู้สึกของทุกคน', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'อะไรที่ทำให้คุณรู้สึกมีพลังมากที่สุด?',
-    opts: [
-      { t: 'การชนะอุปสรรคและความท้าทาย', type: 'warrior' },
-      { t: 'การได้เรียนรู้สิ่งใหม่ๆ', type: 'sage' },
-      { t: 'การได้สร้างสรรค์อะไรบางอย่าง', type: 'dreamer' },
-      { t: 'การได้ช่วยเหลือคนอื่น', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'เมื่อเจอปัญหา คุณมักจะทำอย่างไร?',
-    opts: [
-      { t: 'ลงมือแก้ไขทันที', type: 'warrior' },
-      { t: 'คิดวิเคราะห์หาสาเหตุให้ถี่ถ้วน', type: 'sage' },
-      { t: 'มองหามุมมองใหม่ๆ ที่สร้างสรรค์', type: 'dreamer' },
-      { t: 'ปรึกษาคนอื่นและหาทางออกร่วมกัน', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'ข้อไหนใกล้ตัวคุณมากที่สุด?',
-    opts: [
-      { t: '"ไม่มีอะไร impossible"', type: 'warrior' },
-      { t: '"ความรู้คือพลัง"', type: 'sage' },
-      { t: '"จินตนาการสำคัญกว่าความรู้"', type: 'dreamer' },
-      { t: '"ร่วมมือกันจึงจะสำเร็จ"', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'วันหยุดคุณชอบทำอะไร?',
-    opts: [
-      { t: 'ออกไปผจญภัยหรือเล่นกีฬา', type: 'warrior' },
-      { t: 'อ่านหนังสือหรือดูสารคดี', type: 'sage' },
-      { t: 'ดูหนัง ฟังเพลง หรือทำงานศิลปะ', type: 'dreamer' },
-      { t: 'นัดเจอเพื่อนหรือครอบครัว', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'คนอื่นมักจะบรรยายคุณว่าอย่างไร?',
-    opts: [
-      { t: 'กล้าหาญ มุ่งมั่น', type: 'warrior' },
-      { t: 'ฉลาด มีเหตุผล', type: 'sage' },
-      { t: 'สร้างสรรค์ มีจินตนาการ', type: 'dreamer' },
-      { t: 'ใจดี เข้าอกเข้าใจ', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'คุณตัดสินใจเรื่องสำคัญอย่างไร?',
-    opts: [
-      { t: 'ใช้สัญชาตญาณและความกล้า', type: 'warrior' },
-      { t: 'ใช้ข้อมูลและเหตุผล', type: 'sage' },
-      { t: 'ฟังเสียงหัวใจ', type: 'dreamer' },
-      { t: 'ฟังความคิดเห็นคนรอบข้าง', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'สิ่งไหนที่คุณให้ความสำคัญที่สุด?',
-    opts: [
-      { t: 'อิสรภาพและความอิสระ', type: 'warrior' },
-      { t: 'ความจริงและความถูกต้อง', type: 'sage' },
-      { t: 'ความสวยงามและแรงบันดาลใจ', type: 'dreamer' },
-      { t: 'ความสัมพันธ์และมิตรภาพ', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'เมื่อคุณโกรธ คุณมักจะทำอย่างไร?',
-    opts: [
-      { t: 'แสดงออกตรงๆ', type: 'warrior' },
-      { t: 'ถอยไปคิดก่อน', type: 'sage' },
-      { t: 'เก็บไว้แล้วเขียนหรือวาดระบาย', type: 'dreamer' },
-      { t: 'พูดคุยเพื่อทำความเข้าใจ', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'หนังแนวไหนที่คุณชอบที่สุด?',
-    opts: [
-      { t: 'Action / ผจญภัย', type: 'warrior' },
-      { t: 'สืบสวน / Sci-fi', type: 'sage' },
-      { t: 'Fantasy / ดราม่า', type: 'dreamer' },
-      { t: 'Romance / Comedy', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'คุณอยากมีชีวิตแบบไหน?',
-    opts: [
-      { t: 'ชีวิตที่ท้าทายและน่าตื่นเต้น', type: 'warrior' },
-      { t: 'ชีวิตที่มีความรู้และความเข้าใจ', type: 'sage' },
-      { t: 'ชีวิตที่เต็มไปด้วยศิลปะและความงาม', type: 'dreamer' },
-      { t: 'ชีวิตที่อบอุ่นและมีความรัก', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'ข้อไหนคือจุดอ่อนของคุณ?',
-    opts: [
-      { t: 'ดื้อรั้นเกินไป', type: 'warrior' },
-      { t: 'คิดมากเกินไป', type: 'sage' },
-      { t: 'เพ้อฝันเกินไป', type: 'dreamer' },
-      { t: 'เอาใจคนอื่นเกินไป', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'คุณชอบทำงานแบบไหน?',
-    opts: [
-      { t: 'งานที่ท้าทายและได้ลงมือทำ', type: 'warrior' },
-      { t: 'งานที่ต้องใช้ความคิดและการวิเคราะห์', type: 'sage' },
-      { t: 'งานที่ต้องใช้ความคิดสร้างสรรค์', type: 'dreamer' },
-      { t: 'งานที่ได้ทำงานร่วมกับผู้อื่น', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'ถ้าเพื่อนเสียใจ คุณจะทำอย่างไร?',
-    opts: [
-      { t: 'ชวนเพื่อนไปทำอะไรสนุกๆ เพื่อให้ลืม', type: 'warrior' },
-      { t: 'ให้คำแนะนำและวิเคราะห์ปัญหาให้', type: 'sage' },
-      { t: 'ฟังและเข้าใจความรู้สึกเพื่อน', type: 'dreamer' },
-      { t: 'กอดและอยู่ข้างๆ เพื่อน', type: 'diplomat' }
-    ]
-  },
-  {
-    q: 'คุณมองโลกในแง่ไหนมากที่สุด?',
-    opts: [
-      { t: 'โลกคือสนามรบ ต้องสู้เพื่อชนะ', type: 'warrior' },
-      { t: 'โลกคือห้องเรียน ต้องเรียนรู้ตลอดชีวิต', type: 'sage' },
-      { t: 'โลกคือผืนผ้าใบ ต้องสร้างสรรค์สีสัน', type: 'dreamer' },
-      { t: 'โลกคือบ้าน ต้องดูแลซึ่งกันและกัน', type: 'diplomat' }
-    ]
-  }
+  { q: 'เวลาอยู่กับเพื่อน คุณมักจะเป็นคนแบบไหน?', opts: [
+    { t: 'ผู้นำที่พาเพื่อนทำกิจกรรมต่างๆ', type: 'warrior' },
+    { t: 'คนที่คอยสังเกตและวิเคราะห์สถานการณ์', type: 'sage' },
+    { t: 'คนที่ชวนคุยเรื่องจินตนาการและความฝัน', type: 'dreamer' },
+    { t: 'คนที่คอยดูแลความรู้สึกของทุกคน', type: 'diplomat' }
+  ]},
+  { q: 'อะไรที่ทำให้คุณรู้สึกมีพลังมากที่สุด?', opts: [
+    { t: 'การชนะอุปสรรคและความท้าทาย', type: 'warrior' },
+    { t: 'การได้เรียนรู้สิ่งใหม่ๆ', type: 'sage' },
+    { t: 'การได้สร้างสรรค์อะไรบางอย่าง', type: 'dreamer' },
+    { t: 'การได้ช่วยเหลือคนอื่น', type: 'diplomat' }
+  ]},
+  { q: 'เมื่อเจอปัญหา คุณมักจะทำอย่างไร?', opts: [
+    { t: 'ลงมือแก้ไขทันที', type: 'warrior' },
+    { t: 'คิดวิเคราะห์หาสาเหตุให้ถี่ถ้วน', type: 'sage' },
+    { t: 'มองหามุมมองใหม่ๆ ที่สร้างสรรค์', type: 'dreamer' },
+    { t: 'ปรึกษาคนอื่นและหาทางออกร่วมกัน', type: 'diplomat' }
+  ]},
+  { q: 'ข้อไหนใกล้ตัวคุณมากที่สุด?', opts: [
+    { t: '"ไม่มีอะไร impossible"', type: 'warrior' },
+    { t: '"ความรู้คือพลัง"', type: 'sage' },
+    { t: '"จินตนาการสำคัญกว่าความรู้"', type: 'dreamer' },
+    { t: '"ร่วมมือกันจึงจะสำเร็จ"', type: 'diplomat' }
+  ]},
+  { q: 'วันหยุดคุณชอบทำอะไร?', opts: [
+    { t: 'ออกไปผจญภัยหรือเล่นกีฬา', type: 'warrior' },
+    { t: 'อ่านหนังสือหรือดูสารคดี', type: 'sage' },
+    { t: 'ดูหนัง ฟังเพลง หรือทำงานศิลปะ', type: 'dreamer' },
+    { t: 'นัดเจอเพื่อนหรือครอบครัว', type: 'diplomat' }
+  ]},
+  { q: 'คนอื่นมักจะบรรยายคุณว่าอย่างไร?', opts: [
+    { t: 'กล้าหาญ มุ่งมั่น', type: 'warrior' },
+    { t: 'ฉลาด มีเหตุผล', type: 'sage' },
+    { t: 'สร้างสรรค์ มีจินตนาการ', type: 'dreamer' },
+    { t: 'ใจดี เข้าอกเข้าใจ', type: 'diplomat' }
+  ]},
+  { q: 'คุณตัดสินใจเรื่องสำคัญอย่างไร?', opts: [
+    { t: 'ใช้สัญชาตญาณและความกล้า', type: 'warrior' },
+    { t: 'ใช้ข้อมูลและเหตุผล', type: 'sage' },
+    { t: 'ฟังเสียงหัวใจ', type: 'dreamer' },
+    { t: 'ฟังความคิดเห็นคนรอบข้าง', type: 'diplomat' }
+  ]},
+  { q: 'สิ่งไหนที่คุณให้ความสำคัญที่สุด?', opts: [
+    { t: 'อิสรภาพและความอิสระ', type: 'warrior' },
+    { t: 'ความจริงและความถูกต้อง', type: 'sage' },
+    { t: 'ความสวยงามและแรงบันดาลใจ', type: 'dreamer' },
+    { t: 'ความสัมพันธ์และมิตรภาพ', type: 'diplomat' }
+  ]},
+  { q: 'เมื่อคุณโกรธ คุณมักจะทำอย่างไร?', opts: [
+    { t: 'แสดงออกตรงๆ', type: 'warrior' },
+    { t: 'ถอยไปคิดก่อน', type: 'sage' },
+    { t: 'เก็บไว้แล้วเขียนหรือวาดระบาย', type: 'dreamer' },
+    { t: 'พูดคุยเพื่อทำความเข้าใจ', type: 'diplomat' }
+  ]},
+  { q: 'หนังแนวไหนที่คุณชอบที่สุด?', opts: [
+    { t: 'Action / ผจญภัย', type: 'warrior' },
+    { t: 'สืบสวน / Sci-fi', type: 'sage' },
+    { t: 'Fantasy / ดราม่า', type: 'dreamer' },
+    { t: 'Romance / Comedy', type: 'diplomat' }
+  ]},
+  { q: 'คุณอยากมีชีวิตแบบไหน?', opts: [
+    { t: 'ชีวิตที่ท้าทายและน่าตื่นเต้น', type: 'warrior' },
+    { t: 'ชีวิตที่มีความรู้และความเข้าใจ', type: 'sage' },
+    { t: 'ชีวิตที่เต็มไปด้วยศิลปะและความงาม', type: 'dreamer' },
+    { t: 'ชีวิตที่อบอุ่นและมีความรัก', type: 'diplomat' }
+  ]},
+  { q: 'ข้อไหนคือจุดอ่อนของคุณ?', opts: [
+    { t: 'ดื้อรั้นเกินไป', type: 'warrior' },
+    { t: 'คิดมากเกินไป', type: 'sage' },
+    { t: 'เพ้อฝันเกินไป', type: 'dreamer' },
+    { t: 'เอาใจคนอื่นเกินไป', type: 'diplomat' }
+  ]},
+  { q: 'คุณชอบทำงานแบบไหน?', opts: [
+    { t: 'งานที่ท้าทายและได้ลงมือทำ', type: 'warrior' },
+    { t: 'งานที่ต้องใช้ความคิดและการวิเคราะห์', type: 'sage' },
+    { t: 'งานที่ต้องใช้ความคิดสร้างสรรค์', type: 'dreamer' },
+    { t: 'งานที่ได้ทำงานร่วมกับผู้อื่น', type: 'diplomat' }
+  ]},
+  { q: 'ถ้าเพื่อนเสียใจ คุณจะทำอย่างไร?', opts: [
+    { t: 'ชวนเพื่อนไปทำอะไรสนุกๆ เพื่อให้ลืม', type: 'warrior' },
+    { t: 'ให้คำแนะนำและวิเคราะห์ปัญหาให้', type: 'sage' },
+    { t: 'ฟังและเข้าใจความรู้สึกเพื่อน', type: 'dreamer' },
+    { t: 'กอดและอยู่ข้างๆ เพื่อน', type: 'diplomat' }
+  ]},
+  { q: 'คุณมองโลกในแง่ไหนมากที่สุด?', opts: [
+    { t: 'โลกคือสนามรบ ต้องสู้เพื่อชนะ', type: 'warrior' },
+    { t: 'โลกคือห้องเรียน ต้องเรียนรู้ตลอดชีวิต', type: 'sage' },
+    { t: 'โลกคือผืนผ้าใบ ต้องสร้างสรรค์สีสัน', type: 'dreamer' },
+    { t: 'โลกคือบ้าน ต้องดูแลซึ่งกันและกัน', type: 'diplomat' }
+  ]}
 ];
 
-let currentQuestion = 0;
-let scores = { warrior: 0, sage: 0, dreamer: 0, diplomat: 0 };
-let answers = [];
-
-function createStars() {
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 100; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.setProperty('--d', (2 + Math.random() * 4) + 's');
-    star.style.animationDelay = Math.random() * 5 + 's';
-    star.style.width = star.style.height = (1 + Math.random() * 2) + 'px';
-    container.appendChild(star);
-  }
-}
-createStars();
+// === Quiz logic ===
+let current = 0, scores = {}, answers = [], userName = '';
 
 function startQuiz() {
+  userName = document.getElementById('nameInput').value.trim() || 'คุณ';
   document.getElementById('startScreen').classList.add('hidden');
   document.getElementById('quizScreen').classList.remove('hidden');
-  currentQuestion = 0;
+  current = 0;
   scores = { warrior: 0, sage: 0, dreamer: 0, diplomat: 0 };
   answers = [];
-  renderQuestion();
+  renderQ();
 }
 
-function renderQuestion() {
-  const q = questions[currentQuestion];
-  document.getElementById('questionNumber').textContent = `ข้อที่ ${currentQuestion + 1} / ${questions.length}`;
-  document.getElementById('progressFill').style.width = ((currentQuestion) / questions.length * 100) + '%';
+function renderQ() {
+  const q = questions[current];
+  document.getElementById('questionLabel').textContent = `✦ ข้อที่ ${current + 1}`;
+  document.getElementById('questionCounter').textContent = `${current + 1} / ${questions.length}`;
+  document.getElementById('progressFill').style.width = (current / questions.length * 100) + '%';
   document.getElementById('questionText').textContent = q.q;
+  document.getElementById('questionText').style.opacity = '0';
+  setTimeout(() => { document.getElementById('questionText').style.opacity = '1'; document.getElementById('questionText').style.transition = 'opacity 0.4s'; }, 50);
 
   const container = document.getElementById('optionsContainer');
   container.innerHTML = '';
+  const letters = 'กขคง';
   q.opts.forEach((opt, i) => {
     const btn = document.createElement('button');
-    btn.className = 'btn-option';
-    btn.textContent = opt.t;
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt.t}`;
     btn.dataset.type = opt.type;
-    btn.onclick = () => selectOption(i);
+    btn.dataset.idx = i;
+    btn.onclick = () => selectOpt(i);
+    btn.style.animationDelay = (i * 0.07) + 's';
     container.appendChild(btn);
   });
-
   document.getElementById('btnNext').classList.remove('active');
 }
 
-function selectOption(index) {
-  const buttons = document.querySelectorAll('.btn-option');
-  buttons.forEach((b, i) => b.classList.toggle('selected', i === index));
+function selectOpt(idx) {
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((b, i) => b.classList.toggle('selected', i === idx));
   document.getElementById('btnNext').classList.add('active');
-  answers[currentQuestion] = index;
+  answers[current] = idx;
 }
 
 function nextQuestion() {
-  if (answers[currentQuestion] === undefined) return;
-  const q = questions[currentQuestion];
-  const selectedType = q.opts[answers[currentQuestion]].type;
-  scores[selectedType]++;
-
-  currentQuestion++;
-  if (currentQuestion < questions.length) {
-    renderQuestion();
-  } else {
-    showResult();
-  }
+  if (answers[current] === undefined) return;
+  const q = questions[current];
+  scores[q.opts[answers[current]].type]++;
+  current++;
+  if (current < questions.length) renderQ();
+  else showResult();
 }
 
 function showResult() {
@@ -589,58 +814,87 @@ function showResult() {
   document.getElementById('progressFill').style.width = '100%';
 
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-  const topType = types.find(t => t.id === sorted[0][0]);
-  const secondType = types.find(t => t.id === sorted[1][0]);
+  const top = types.find(t => t.id === sorted[0][0]);
+  const second = types.find(t => t.id === sorted[1][0]);
 
-  document.getElementById('resultIcon').textContent = topType.icon;
-  document.getElementById('resultTitle').textContent = `คุณคือ "${topType.name}"`;
-  document.getElementById('resultSubtitle').textContent = `บุคลิกภาพที่ ${topType.traits[0]} และ${topType.traits[1]}`;
+  document.getElementById('resultIcon').textContent = top.icon;
+  document.getElementById('resultBadge').textContent = `✦ ${top.name}`;
+  document.getElementById('resultTitle').textContent = `${userName} คือ "${top.name}"`;
+  document.getElementById('resultSubtitle').textContent = `บุคลิกภาพที่ ${top.traits[0]} และ${top.traits[1]}`;
 
-  const traitsContainer = document.getElementById('resultTraits');
-  traitsContainer.innerHTML = '';
-  topType.traits.forEach(t => {
-    const tag = document.createElement('span');
-    tag.className = 'trait-tag';
-    tag.textContent = t;
-    traitsContainer.appendChild(tag);
+  const traitsEl = document.getElementById('resultTraits');
+  traitsEl.innerHTML = '';
+  top.traits.forEach((t, i) => {
+    const span = document.createElement('span');
+    span.className = 'trait';
+    span.textContent = t;
+    span.style.animationDelay = (i * 0.08) + 's';
+    traitsEl.appendChild(span);
   });
 
-  document.getElementById('resultDescription').textContent = topType.desc;
+  document.getElementById('resultDescription').textContent = top.desc;
+  document.getElementById('detailStrength').textContent = top.strength;
+  document.getElementById('detailAdvice').textContent = top.advice;
 
-  const scoresSection = document.getElementById('scoresSection');
-  scoresSection.innerHTML = '<div style="color:#a89bc0;margin-bottom:12px;font-size:0.9rem;">คะแนนบุคลิกภาพ</div>';
+  const bars = document.getElementById('barContainer');
+  bars.innerHTML = '';
   const colors = { warrior: '#ef4444', sage: '#3b82f6', dreamer: '#a855f7', diplomat: '#10b981' };
-  sorted.forEach(([id, score]) => {
+  sorted.forEach(([id, score], i) => {
     const pct = Math.round(score / questions.length * 100);
-    const typeInfo = types.find(t => t.id === id);
-
+    const info = types.find(t => t.id === id);
     const div = document.createElement('div');
-    div.className = 'score-item';
+    div.className = 'bar-item';
+    div.style.animationDelay = (i * 0.1) + 's';
     div.innerHTML = `
-      <span class="score-label">${typeInfo.icon} ${typeInfo.name}</span>
-      <div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:${colors[id]}"></div></div>
-      <span class="score-val">${pct}%</span>
+      <span class="bar-label">${info.icon} ${info.name}</span>
+      <div class="bar-bg"><div class="bar-fill" data-pct="${pct}" style="background:${colors[id]}"></div></div>
+      <span class="bar-pct">0%</span>
     `;
-    scoresSection.appendChild(div);
+    bars.appendChild(div);
   });
 
   setTimeout(() => {
-    document.querySelectorAll('.score-bar-fill').forEach((bar, i) => {
-      bar.style.width = Math.round(sorted[i][1] / questions.length * 100) + '%';
+    document.querySelectorAll('.bar-fill').forEach(el => {
+      const pct = parseInt(el.dataset.pct);
+      el.style.width = pct + '%';
     });
-  }, 200);
+    setTimeout(() => {
+      document.querySelectorAll('.bar-item').forEach((item, i) => {
+        const pct = parseInt(item.querySelector('.bar-fill').dataset.pct);
+        item.querySelector('.bar-pct').textContent = pct + '%';
+      });
+    }, 1800);
+  }, 300);
+}
+
+function shareResult() {
+  const topId = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const top = types.find(t => t.id === topId);
+  const text = `🔮 ${userName} ได้ "${top.name}" ${top.icon} จากแบบทดสอบบุคลิกภาพ!\n\n✨ ลองทำดู: https://nozor1x-gif.github.io/personality-quiz/`;
+  if (navigator.share) {
+    navigator.share({ title: 'ค้นหาตัวตนที่แท้จริง', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast('📋 คัดลอกลิงก์แชร์แล้ว!')).catch(() => {});
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
 }
 
 function restartQuiz() {
   document.getElementById('resultScreen').classList.add('hidden');
   document.getElementById('startScreen').classList.remove('hidden');
+  document.getElementById('nameInput').focus();
 }
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !document.getElementById('startScreen').classList.contains('hidden')) {
-    startQuiz();
-  } else if (e.key === 'Enter' && document.getElementById('btnNext').classList.contains('active')) {
-    nextQuestion();
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (!document.getElementById('startScreen').classList.contains('hidden')) startQuiz();
+    else if (document.getElementById('btnNext').classList.contains('active')) nextQuestion();
   }
 });
 </script>
